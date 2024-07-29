@@ -6,7 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
+import net.runelite.api.VarPlayer;
+import net.runelite.api.Varbits;
 import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.events.VarbitChanged;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
@@ -23,6 +26,7 @@ public class TobPartyFocusPlugin extends Plugin
 
 	@Inject
 	private TobPartyFocusConfig config;
+	private boolean isInParty = false;
 
 	@Override
 	protected void startUp() throws Exception
@@ -42,6 +46,15 @@ public class TobPartyFocusPlugin extends Plugin
 		if (gameStateChanged.getGameState() == GameState.LOGGED_IN)
 		{
 			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "Example says " + config.greeting(), null);
+		}
+	}
+
+	@Subscribe
+	public void onVarbitChanged(VarbitChanged varbitChanged)
+	{
+		if (varbitChanged.getVarbitId() == Varbits.THEATRE_OF_BLOOD)
+		{
+			isInParty = varbitChanged.getValue() == 1;
 		}
 	}
 
