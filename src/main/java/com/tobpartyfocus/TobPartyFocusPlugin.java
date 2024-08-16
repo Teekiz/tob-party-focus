@@ -11,6 +11,7 @@ import net.runelite.api.GameState;
 import net.runelite.api.Player;
 import net.runelite.api.VarPlayer;
 import net.runelite.api.Varbits;
+import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.CommandExecuted;
 import net.runelite.api.events.GameStateChanged;
@@ -33,6 +34,8 @@ public class TobPartyFocusPlugin extends Plugin
 
 	private int tobPartyWidgetID = 1835020; //Teekiz<br>-
 	private boolean isInParty = false;
+	private WorldPoint bankPoint1 = new WorldPoint(3655, 3216, 0);
+	private WorldPoint bankPoint2 = new WorldPoint(3646, 3207, 0);
 
 	@Override
 	protected void startUp() throws Exception
@@ -58,6 +61,8 @@ public class TobPartyFocusPlugin extends Plugin
 		playersNamesInParty = playersNamesInParty.replace("-", "");
 		return List.of(playersNamesInParty.split("<br>"));
 	}
+
+	//join/leave party
 	@Subscribe
 	public void onVarbitChanged(VarbitChanged varbitChanged)
 	{
@@ -77,14 +82,23 @@ public class TobPartyFocusPlugin extends Plugin
 		}
 	}
 
+	//todo delete
 	@Subscribe
 	public void onCommandExecuted(CommandExecuted commandExecuted)
 	{
 		//::tobtest
 		if (commandExecuted.getCommand().equalsIgnoreCase("tobtest"))
 		{
-			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", getPartyMembers().get(0), null);
+			//client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", getPartyMembers().get(0), null);
+			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", String.valueOf(isAtBank()), null);
 		}
+	}
+
+	public boolean isAtBank()
+	{
+		WorldPoint playerLocation = client.getLocalPlayer().getWorldLocation();
+		return (playerLocation.getX() <= bankPoint1.getX() && playerLocation.getX() >= bankPoint2.getX() &&
+			playerLocation.getY() <= bankPoint1.getY() && playerLocation.getY() >= bankPoint2.getY());
 	}
 
 
